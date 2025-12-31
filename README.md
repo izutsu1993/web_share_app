@@ -49,8 +49,17 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /memos/{memoId} {
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+      // 読み取り: 認証済みで、自分のメモのみ
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      
+      // 作成: 認証済みで、自分のuserIdを設定している場合
       allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      
+      // 更新: 認証済みで、既存のドキュメントのuserIdと一致する場合
+      allow update: if request.auth != null && request.auth.uid == resource.data.userId;
+      
+      // 削除: 認証済みで、自分のメモのみ
+      allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
     }
   }
 }
