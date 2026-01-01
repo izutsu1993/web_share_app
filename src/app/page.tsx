@@ -37,7 +37,7 @@ export default function Home() {
   const handleDelete = async (e: React.MouseEvent, memo: Memo) => {
     e.stopPropagation(); // クリックイベントの伝播を止める
     
-    if (!user) return;
+    if (!user || !memo.id) return;
     
     if (!confirm(`「${memo.title}」を削除しますか？`)) {
       return;
@@ -93,11 +93,11 @@ export default function Home() {
               >
                 <button
                   onClick={(e) => handleDelete(e, memo)}
-                  disabled={deletingId === memo.id}
+                  disabled={deletingId === memo.id || !memo.id}
                   className="absolute top-4 right-4 text-red-500 hover:text-red-700 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
                   title="削除"
                 >
-                  {deletingId === memo.id ? (
+                  {deletingId === memo.id && memo.id ? (
                     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
