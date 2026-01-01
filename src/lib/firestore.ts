@@ -5,6 +5,7 @@ import {
   getDoc,
   setDoc,
   updateDoc,
+  deleteDoc,
   query,
   where,
   getDocs,
@@ -123,7 +124,9 @@ export async function deleteMemo(userId: string, url: string): Promise<void> {
     
     const docSnap = await getDoc(docRef);
     if (docSnap.exists() && docSnap.data().userId === userId) {
-      await setDoc(docRef, { deleted: true }, { merge: true });
+      await deleteDoc(docRef);
+    } else {
+      throw new Error('メモが見つからないか、削除権限がありません');
     }
   } catch (error) {
     console.error('メモ削除エラー:', error);
