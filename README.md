@@ -1,6 +1,6 @@
-# クラシルメモ - Web Share Target API PWA
+# 料理メモ - Web Share Target API PWA
 
-クラシルのレシピにメモを追加できるPWAアプリケーションです。
+レシピにメモを追加できるPWAアプリケーションです。
 
 ## 機能
 
@@ -50,7 +50,9 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /memos/{memoId} {
       // 読み取り: 認証済みで、自分のメモのみ
-      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      // クエリ（list）の場合も対応するため、resource == null をチェック
+      allow read: if request.auth != null && 
+                     (resource == null || resource.data.userId == request.auth.uid);
       
       // 作成: 認証済みで、自分のuserIdを設定している場合
       allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
@@ -64,6 +66,8 @@ service cloud.firestore {
   }
 }
 ```
+
+**注意**: `read`ルールで`resource == null`をチェックしているのは、クエリ（`list`）の場合に`resource`が存在しないためです。クエリでは`where('userId', '==', userId)`でフィルタリングされているため、セキュリティ上問題ありません。
 
 ### 4-1. Firestoreインデックスの作成
 
@@ -151,9 +155,9 @@ npm run dev:https
 
 ### メモの追加
 
-1. クラシルのレシピページを開く
+1. レシピページを開く
 2. ブラウザの「共有」ボタンをタップ
-3. 「クラシルメモ」アプリを選択
+3. 「料理メモ」アプリを選択
 4. メモを入力して保存
 
 ### メモの編集
@@ -165,9 +169,47 @@ npm run dev:https
 
 ### Vercelへのデプロイ（推奨）
 
-1. [Vercel](https://vercel.com)にプロジェクトをインポート
-2. 環境変数を設定
-3. デプロイ
+#### 初回セットアップ（手動デプロイ）
+
+1. [Vercel](https://vercel.com)にログイン
+2. 「Add New Project」をクリック
+3. GitHubリポジトリ（`izutsu1993/web_share_app`）を選択
+4. プロジェクト設定：
+   - **Framework Preset**: Next.js（自動検出される）
+   - **Root Directory**: `./`（デフォルト）
+5. 環境変数を設定（`.env.local`と同じ内容）：
+   - `NEXT_PUBLIC_FIREBASE_API_KEY`
+   - `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
+   - `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
+   - `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
+   - `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+   - `NEXT_PUBLIC_FIREBASE_APP_ID`
+6. 「Deploy」をクリック
+
+#### 自動デプロイの設定
+
+GitHubリポジトリと連携すると、自動デプロイが有効になります：
+
+1. Vercelダッシュボードでプロジェクトを開く
+2. **Settings** > **Git** を開く
+3. GitHubリポジトリが連携されていることを確認
+4. **Production Branch** を `main` に設定（デフォルト）
+
+**自動デプロイの動作**：
+- `main`ブランチへの`push` → 本番環境（Production）に自動デプロイ
+- その他のブランチへの`push` → プレビュー環境に自動デプロイ
+
+**注意**: 
+- Deployment Protectionが有効な場合、`manifest.json`へのアクセスが401エラーになる可能性があります。Settings > General > Deployment Protection を無効にしてください。
+- 環境変数はVercelダッシュボードの Settings > Environment Variables で管理します。
+
+#### 手動デプロイ（必要に応じて）
+
+自動デプロイが設定されていても、手動でデプロイしたい場合：
+
+```bash
+vercel --prod
+```
 
 ### その他のプラットフォーム
 

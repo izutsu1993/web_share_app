@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "クラシルメモ",
-  description: "クラシルのレシピにメモを追加",
+  title: "料理メモ",
+  description: "レシピにメモを追加",
   manifest: "/manifest.json",
   themeColor: "#000000",
   viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "クラシルメモ",
+    title: "料理メモ",
   },
 };
 

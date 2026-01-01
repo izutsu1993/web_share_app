@@ -3,9 +3,9 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   const manifest = {
     id: "/",
-    name: "クラシルメモ",
-    short_name: "クラシルメモ",
-    description: "クラシルのレシピにメモを追加",
+    name: "料理メモ",
+    short_name: "料理メモ",
+    description: "レシピにメモを追加",
     start_url: "/",
     scope: "/",
     display: "standalone",

@@ -73,24 +73,8 @@ function ShareTargetContent() {
       router.push('/');
     } catch (error) {
       console.error('保存エラー:', error);
-      // エラーの詳細を表示（Firebaseエラーに対応）
-      let errorMessage = '保存に失敗しました';
-      
-      // Firebaseエラーの場合
-      if (error && typeof error === 'object' && 'code' in error) {
-        const firebaseError = error as { code: string; message: string };
-        errorMessage += `\n\nコード: ${firebaseError.code}\nメッセージ: ${firebaseError.message}`;
-      } else if (error instanceof Error) {
-        errorMessage += `\n\nエラー: ${error.message}`;
-      } else if (typeof error === 'object' && error !== null) {
-        errorMessage += `\n\nエラー: ${JSON.stringify(error, null, 2)}`;
-      } else {
-        errorMessage += `\n\nエラー: ${String(error)}`;
-      }
-      
-      // alertは改行を正しく表示しない場合があるため、consoleにも出力
-      console.error('詳細エラー:', errorMessage);
-      alert(errorMessage);
+      // エラーの詳細はコンソールにのみ出力し、ユーザーには簡潔なメッセージを表示
+      alert('保存に失敗しました。しばらく時間をおいて再度お試しください。');
     } finally {
       setSaving(false);
     }
